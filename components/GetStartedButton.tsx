@@ -3,9 +3,10 @@
 interface GetStartedButtonProps {
   className?: string;
   size?: "default" | "small";
+  onClick?: () => void;
 }
 
-const GetStartedButton = ({ className = "", size = "default" }: GetStartedButtonProps) => {
+const GetStartedButton = ({ className = "", size = "default", onClick }: GetStartedButtonProps) => {
   const sizeClasses = size === "small"
     ? "pl-5 pr-4 py-2 text-base gap-2"
     : "pl-7 pr-6 py-3 text-xl gap-3";
@@ -14,7 +15,9 @@ const GetStartedButton = ({ className = "", size = "default" }: GetStartedButton
   const iconSize = size === "small" ? "w-3.5 h-3.5" : "w-5 h-5";
 
   const handleClick = () => {
-    window.open('https://calendly.com/taylor-jones-hyperscaleinboxes/30min?month=2025-11', '_blank', 'noopener,noreferrer');
+    if (onClick) {
+      onClick();
+    }
   };
 
   return (

@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import GetStartedButton from "./GetStartedButton";
+import OrderPopup from "./OrderPopup";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -35,9 +37,16 @@ const Navigation = () => {
       }}>
         <div className="flex items-center justify-between h-16 px-6 lg:px-8">
           {/* Logo */}
-          <Link href="/" className="flex items-center group">
-            <span className="text-2xl font-bold bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent transition-all duration-500">
-              HyperScaleInboxes
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative flex items-center justify-center p-1.5 rounded-lg transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-orange-500/10 group-hover:to-orange-600/5">
+              <img 
+                src="/logo-icon.svg" 
+                alt="HyperScaleInboxes" 
+                className="h-7 w-7 transition-all duration-300 group-hover:scale-110"
+              />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent tracking-tight">
+              HyperScale
             </span>
           </Link>
 
@@ -58,7 +67,7 @@ const Navigation = () => {
           {/* Action Button & Mobile Menu Toggle */}
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex">
-              <GetStartedButton size="small" />
+              <GetStartedButton size="small" onClick={() => setIsPopupOpen(true)} />
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -98,12 +107,14 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="px-6 py-3">
-                <GetStartedButton size="small" className="w-full justify-center" />
+                <GetStartedButton size="small" className="w-full justify-center" onClick={() => setIsPopupOpen(true)} />
               </div>
             </div>
           </div>
         )}
       </div>
+
+      <OrderPopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
     </nav>
   );
 };

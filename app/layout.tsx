@@ -15,7 +15,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "HyperscaleInboxes | Scale Your Email Deliverability",
-  description: "Transform your email infrastructure with our enterprise-grade inbox management solution. Reach more inboxes, boost engagement, and scale your outreach effortlessly.",
+  description: "Transform your email infrastructure with our enterprise-grade inbox management solution. Reach more inboxes, boost engagement, and scale your outreach effortlessly",
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
+  },
 };
 
 export default function RootLayout({

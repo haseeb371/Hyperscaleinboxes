@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import GetStartedButton from "./GetStartedButton";
 import DeliverabilityChart from "./DeliverabilityChart";
+import OrderPopup from "./OrderPopup";
 
 const HeroSection = () => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   return (
     <section className="relative min-h-screen overflow-hidden flex items-center pt-20" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #141414 100%)" }}>
       {/* Enhanced Animated Background Elements */}
@@ -45,7 +48,7 @@ const HeroSection = () => {
             </p>
 
             <div className="flex flex-wrap items-center justify-start gap-5 pt-4 animate-fade-in-up">
-              <GetStartedButton />
+              <GetStartedButton onClick={() => setIsPopupOpen(true)} />
               <a href="#comparison" className="rounded-full px-10 py-4 text-lg font-semibold backdrop-blur-xl text-white transition-all duration-500 border group relative overflow-hidden flex items-center gap-3"
                 style={{
                   background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)',
@@ -123,6 +126,8 @@ const HeroSection = () => {
           animation-delay: 2s;
         }
       `}</style>
+
+      <OrderPopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
     </section>
   );
 };

@@ -15,12 +15,16 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #ff6e40 0%, #ff8c69 100%)' }}>
-                <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+              <div className="relative flex items-center justify-center p-2 rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-600/5 border border-orange-500/20">
+                <img 
+                  src="/logo-icon.svg" 
+                  alt="HyperScaleInboxes" 
+                  className="h-10 w-10"
+                />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-white to-orange-400 bg-clip-text text-transparent">HyperScale</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-white via-orange-200 to-orange-400 bg-clip-text text-transparent tracking-tight">
+                HyperScale
+              </span>
             </div>
             <p className="text-base mb-8 text-gray-300 leading-relaxed">
               Premium email infrastructure built for scale. Unlimited capacity, Microsoft Partner accounts, and enterprise-grade deliverability.

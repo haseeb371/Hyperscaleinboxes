@@ -20,17 +20,10 @@ const ComparisonSection = () => {
     },
     {
       name: "Emails per Day",
-      hyperscale: "200/account",
+      hyperscale: "2-5/account",
       inboxing: "2-5/account",
       hypertide: "2/account",
       scaledmail: "15/account"
-    },
-    {
-      name: "Total Daily Capacity",
-      hyperscale: "Unlimited",
-      inboxing: "245/domain",
-      hypertide: "100/domain",
-      scaledmail: "735/domain"
     },
     {
       name: "Setup Time",

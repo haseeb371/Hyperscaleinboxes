@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import GetStartedButton from "./GetStartedButton";
+import OrderPopup from "./OrderPopup";
 
 const PricingSection = () => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const features = [
     "100% Automated Setup",
     "24 Hour Turnaround",
@@ -112,11 +114,20 @@ const PricingSection = () => {
 
               {/* CTA */}
               <button
+                onClick={() => setIsPopupOpen(true)}
                 className="w-full rounded-xl py-3.5 font-semibold transition-all duration-300 border"
                 style={{
                   borderColor: 'rgba(255, 255, 255, 0.2)',
                   color: '#fff',
                   backgroundColor: 'rgba(255, 255, 255, 0.05)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
                 }}
               >
                 Get Started
@@ -202,10 +213,21 @@ const PricingSection = () => {
 
               {/* CTA */}
               <button
+                onClick={() => setIsPopupOpen(true)}
                 className="w-full rounded-xl py-3.5 font-semibold transition-all duration-300"
                 style={{
                   backgroundColor: '#ff6e40',
                   color: '#fff'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ff8c69';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(255, 110, 64, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ff6e40';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
                 }}
               >
                 Get Started
@@ -214,6 +236,8 @@ const PricingSection = () => {
           </div>
         </div>
       </div>
+
+      <OrderPopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
     </section>
   );
 };

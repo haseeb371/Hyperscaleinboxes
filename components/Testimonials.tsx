@@ -26,7 +26,7 @@ const Reviews = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const videoRefs = useRef<(HTMLVideoElement | any)[]>([]);
   const sectionRef = useRef<HTMLElement>(null);
 
   const playActiveVideo = useCallback(() => {
@@ -114,7 +114,9 @@ const Reviews = () => {
                   {isActive ? (
                     <div className="relative h-full w-full">
                       <video
-                        ref={(el) => (videoRefs.current[i] = el)}
+                        ref={(el) => {
+  videoRefs.current[i] = el;
+}}
                         src={client.videoSrc}
                         className="h-full w-full object-cover"
                         muted={isMuted}

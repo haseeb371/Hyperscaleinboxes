@@ -75,11 +75,6 @@ const Reviews = () => {
 
   return (
     <section ref={sectionRef} className="container mx-auto py-16 md:py-24 lg:py-32">
-      <Heading
-        title="Why Clients Trust Us"
-        description="Hear directly from founders and leaders who scaled with us."
-        buttonLink="https://calendly.com/voltic-inc/discovery-meeting"
-      />
 
       {/* Full container */}
       <div className="relative mt-16 overflow-hidden p-8">

@@ -10,6 +10,21 @@ export async function POST(request: NextRequest) {
         const adminEmail = process.env.ADMIN_EMAIL;
         const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
 
+
+console.log('Login attempt:', {
+    providedEmail: email,
+    expectedEmail: adminEmail,
+    emailMatch: email === adminEmail,
+    hasPassword: !!password,
+    hasPasswords: password,
+    hasHash: !!adminPasswordHash,
+    hashLength: adminPasswordHash?.length,
+    // Show the actual hash value
+    actualHash: adminPasswordHash,
+    // Show first and last 10 chars
+    hashStart: adminPasswordHash?.substring(0, 10),
+    hashEnd: adminPasswordHash?.substring(adminPasswordHash.length - 10)
+});
         if (!adminEmail || !adminPasswordHash) {
             return NextResponse.json(
                 { error: 'Server configuration error' },

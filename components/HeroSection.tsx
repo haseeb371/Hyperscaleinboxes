@@ -31,7 +31,7 @@ const HeroSection = () => {
                   New
                 </span>
                 <span className="text-sm font-semibold text-white tracking-wide">
-                  Email deliverability enhanced
+                  Unlimited Mailboxes - First Month Free
                 </span>
               </div>
             </div>

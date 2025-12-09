@@ -145,7 +145,6 @@
 
 
 // app/api/create-checkout-session/route.ts (or wherever your file is)
-
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import connectDB from '@/lib/mongodb';
@@ -155,11 +154,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-11-17.clover',
 });
 
-// Load price IDs from .env – make sure these are set!
+// Price IDs
 const PRICE_IDS = {
-  byod: process.env.STRIPE_PRICE_ID_BYOD,       // e.g. Bring Your Own Domain plan
-  full: process.env.STRIPE_PRICE_ID_FULL,       // e.g. Full Package (includes domains)
+  byod: process.env.STRIPE_PRICE_ID_BYOD,
+  full: process.env.STRIPE_PRICE_ID_FULL,
 } as const;
+
+// Optional coupon from .env (can be empty or undefined → Stripe ignores it safely)
+const DEFAULT_COUPON_ID = process.env.STRIPE_COUPON_ID_FREE_MONTH || undefined;
+
+console.log(DEFAULT_COUPON_ID)
 
 export async function POST(request: NextRequest) {
   try {
@@ -173,10 +177,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const packageType = formData.packageType; // 'byod' or 'full'
-
-    // Select correct price ID
-    const priceId = PRICE_IDS[packageType as keyof typeof PRICE_IDS];
+    const packageType = formData.packageType as 'byod' | 'full';
+    const priceId = PRICE_IDS[packageType];
 
     if (!priceId) {
       console.error(`No Stripe Price ID configured for packageType: ${packageType}`);
@@ -186,36 +188,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calculate quantity: for BYOD it's number of domains, for full package usually 1 subscription = multiple domains
     const quantity = packageType === 'byod'
-      ? parseInt(formData.numberOfDomains) || 1
-      : 1; // Full package is typically per account, not per domain
+      ? Math.max(1, parseInt(formData.numberOfDomains) || 1)
+      : 1;
 
-    // === Customer Logic (unchanged, just extracted for clarity) ===
-    let customerId: string | null = null;
+    // === Customer Logic ===
+    let customerId: string | undefined;
 
     try {
-      const existingCustomers = await stripe.customers.list({
+      const existing = await stripe.customers.list({
         email: formData.email,
         limit: 1,
       });
 
-      if (existingCustomers.data.length > 0) {
-        customerId = existingCustomers.data[0].id;
+      if (existing.data.length > 0) {
+        customerId = existing.data[0].id;
       } else {
-        const newCustomer = await stripe.customers.create({
+        const customer = await stripe.customers.create({
           email: formData.email,
           name: formData.name,
           phone: formData.phone || undefined,
-          metadata: {
-            companyName: formData.companyName || '',
-          },
+          metadata: { companyName: formData.companyName || '' },
         });
-        customerId = newCustomer.id;
+        customerId = customer.id;
       }
-    } catch (error: any) {
-      console.error('Error handling customer:', error);
-      // Continue — Stripe will auto-create customer from email
+    } catch (err) {
+      console.warn('Customer lookup/create failed, falling back to email-only');
     }
 
     // === Metadata ===
@@ -224,69 +222,62 @@ export async function POST(request: NextRequest) {
       customerEmail: formData.email || '',
       customerPhone: formData.phone || '',
       companyName: formData.companyName || '',
-      packageType: packageType,
+      packageType,
       numberOfDomains: String(formData.numberOfDomains || quantity),
     };
 
-    // Add domain info
-    if (packageType === 'byod' && formData.customDomains?.length > 0) {
-      const domains = formData.customDomains.join(', ');
-      metadata.customDomains = domains.slice(0, 500); // Stripe limit per value
-    } else if (packageType === 'full' && formData.selectedDomains?.length > 0) {
-      const domains = formData.selectedDomains.join(', ');
-      metadata.selectedDomains = domains.slice(0, 500);
+    if (packageType === 'byod' && Array.isArray(formData.customDomains)) {
+      metadata.customDomains = formData.customDomains.join(', ').slice(0, 500);
+    }
+    if (packageType === 'full' && Array.isArray(formData.selectedDomains)) {
+      metadata.selectedDomains = formData.selectedDomains.join(', ').slice(0, 500);
     }
 
-    // Optional fields
     ['website', 'dnsProvider', 'providerEmail'].forEach((key) => {
-      if (formData[key] && formData[key].length < 200) {
+      if (formData[key] && typeof formData[key] === 'string' && formData[key].length < 200) {
         metadata[key] = formData[key];
       }
     });
 
-    // === Create Checkout Session ===
-    const sessionConfig: Stripe.Checkout.SessionCreateParams = {
+    // === Checkout Session Config ===
+const sessionParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity,
-        },
-      ],
+      line_items: [{ price: priceId, quantity }],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || request.headers.get('origin')}/order-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || request.headers.get('origin')}/order-form`,
-      customer: customerId || undefined,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/order-form`,
+      customer: customerId,
       customer_email: customerId ? undefined : formData.email,
       metadata,
-      // Optional: allow promotion codes
-      allow_promotion_codes: true,
+
+      // Auto-apply free month coupon if set
+      ...(DEFAULT_COUPON_ID && {
+        discounts: [{ coupon: DEFAULT_COUPON_ID }],
+      }),
+
+      // Only allow manual promo codes if we're NOT auto-applying one
+      ...(DEFAULT_COUPON_ID ? {} : { allow_promotion_codes: true }),
     };
 
-    const session = await stripe.checkout.sessions.create(sessionConfig);
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
-    // === Store accountNames temporarily if provided (for webhook use later) ===
-    if (accountNames && accountNames.length > 0) {
+    // === Store accountNames for webhook ===
+    if (accountNames?.length > 0) {
       try {
         await connectDB();
-        const expiresAt = new Date();
-        expiresAt.setHours(expiresAt.getHours() + 24);
-
         await CheckoutSession.create({
           sessionId: session.id,
           accountNames: JSON.stringify(accountNames),
-          expiresAt,
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         });
-      } catch (dbError: any) {
-        console.error('Failed to store accountNames in DB:', dbError);
-        // Non-critical — continue
+      } catch (err) {
+        console.error('DB save failed (non-critical):', err);
       }
     }
 
     return NextResponse.json({
       sessionId: session.id,
       url: session.url,
-      accountNamesCount: accountNames?.length || 0,
     });
   } catch (error: any) {
     console.error('Stripe checkout error:', error);

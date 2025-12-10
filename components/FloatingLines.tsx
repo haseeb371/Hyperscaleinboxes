@@ -7,9 +7,20 @@ import {
   Mesh,
   ShaderMaterial,
   Vector3,
-  Vector2,
   Clock
 } from 'three';
+
+// Type for shader uniforms
+interface ShaderUniforms {
+  iTime: { value: number };
+  iResolution: { value: Vector3 };
+  animationSpeed: { value: number };
+  lineCount: { value: number };
+  lineDistance: { value: number };
+  wavePosition: { value: Vector3 };
+  lineGradient: { value: Vector3[] };
+  lineGradientCount: { value: number };
+}
 
 const vertexShader = `
 precision mediump float;
@@ -159,7 +170,7 @@ export default function FloatingLines({
   mixBlendMode = 'screen'
 }: FloatingLinesProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const uniformsRef = useRef<any>(null);
+  const uniformsRef = useRef<ShaderUniforms | null>(null);
   const isVisibleRef = useRef<boolean>(true);
 
   // Memoize gradient computation

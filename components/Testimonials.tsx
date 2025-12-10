@@ -26,7 +26,7 @@ const Reviews = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const videoRefs = useRef<(HTMLVideoElement | any)[]>([]);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const sectionRef = useRef<HTMLElement>(null);
 
   const playActiveVideo = useCallback(() => {

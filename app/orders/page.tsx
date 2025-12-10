@@ -50,8 +50,8 @@ export default function OrdersPage() {
       }
 
       setOrders(data.orders || []);
-    } catch (err: any) {
-      setError(err.message || "Failed to search orders");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to search orders");
       setOrders([]);
     } finally {
       setIsLoading(false);

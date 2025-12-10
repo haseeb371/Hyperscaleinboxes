@@ -245,7 +245,7 @@ const HowItWorks = () => {
                           }}
                         />
                         <div className="relative z-10" style={{ color: '#ff6e40' }}>
-                          {React.cloneElement(step.icon as React.ReactElement, { className: 'w-24 h-24', strokeWidth: 1.5 } as any)}
+                          {React.cloneElement(step.icon as React.ReactElement<{ className?: string; strokeWidth?: number }>, { className: 'w-24 h-24', strokeWidth: 1.5 })}
                         </div>
                       </div>
 

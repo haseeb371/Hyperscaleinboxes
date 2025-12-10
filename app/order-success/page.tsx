@@ -61,7 +61,7 @@ function OrderSuccessContent() {
             <ul className="text-left text-gray-300 space-y-3 max-w-md mx-auto">
               <li className="flex items-start gap-3">
                 <span className="text-orange-400 mt-1">✓</span>
-                <span>You'll receive an order confirmation email with all the details</span>
+                <span>You&apos;ll receive an order confirmation email with all the details</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-orange-400 mt-1">✓</span>
@@ -69,7 +69,7 @@ function OrderSuccessContent() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-orange-400 mt-1">✓</span>
-                <span>We'll contact you within 24-48 hours to set up your email accounts</span>
+                <span>We&apos;ll contact you within 24-48 hours to set up your email accounts</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-orange-400 mt-1">✓</span>

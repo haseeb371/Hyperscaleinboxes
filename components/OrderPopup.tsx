@@ -107,13 +107,13 @@ const OrderPopup = ({ isOpen, onClose }: OrderPopupProps) => {
           {/* Header */}
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              Let's Get{' '}
+              Let&apos;s Get{' '}
               <span className="bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
                 Started
               </span>
             </h2>
             <p className="text-lg text-gray-300">
-              Choose how you'd like to proceed
+              Choose how you&apos;d like to proceed
             </p>
           </div>
 
@@ -192,7 +192,7 @@ const OrderPopup = ({ isOpen, onClose }: OrderPopupProps) => {
 
                 <h3 className="text-xl font-bold text-white mb-3">Place Order</h3>
                 <p className="text-gray-200 text-sm leading-relaxed">
-                  Ready to go? Fill out our order form and we'll get you set up within 24 hours.
+                  Ready to go? Fill out our order form and we&apos;ll get you set up within 24 hours.
                 </p>
               </div>
             </button>

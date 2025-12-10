@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
-    let query: any = {};
+    const query: Record<string, string | { $regex: string; $options: string }> = {};
 
     if (email) {
       query.customerEmail = email;
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       orders,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Public order search error:', error);
     return NextResponse.json(
       { error: 'Failed to search orders' },

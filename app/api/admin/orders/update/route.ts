@@ -40,7 +40,7 @@ export async function PATCH(request: NextRequest) {
         await connectDB();
 
         // Build update object
-        const updateData: any = {};
+        const updateData: Record<string, string | number> = {};
         if (status !== undefined) updateData.status = status;
         if (progressPercentage !== undefined) updateData.progressPercentage = progressPercentage;
         if (progressStatus !== undefined) updateData.progressStatus = progressStatus;

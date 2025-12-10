@@ -41,10 +41,11 @@ export async function POST(request: NextRequest) {
         signature,
         process.env.STRIPE_WEBHOOK_SECRET
       );
-    } catch (err: any) {
-      console.error('Webhook signature verification failed:', err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      console.error('Webhook signature verification failed:', message);
       return NextResponse.json(
-        { error: `Webhook Error: ${err.message}` },
+        { error: `Webhook Error: ${message}` },
         { status: 400 }
       );
     }
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
               // Delete the temporary storage after retrieving
               await CheckoutSession.deleteOne({ sessionId: session.id });
             }
-          } catch (accountNamesError: any) {
+          } catch (accountNamesError: unknown) {
             console.error('Error retrieving account names:', accountNamesError);
             // Continue without accountNames
           }
@@ -155,14 +156,16 @@ export async function POST(request: NextRequest) {
           if (subscriptionId) {
             try {
               const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-              subscriptionStatus = subscription.status as any;
+              // Use Record type to handle varying Stripe API versions
+              const subData = subscription as unknown as Record<string, unknown>;
+              subscriptionStatus = subData.status as typeof subscriptionStatus;
             } catch (subError) {
               console.error('Error retrieving subscription:', subError);
             }
           }
 
           // Create order document
-          const orderData: any = {
+          const orderData: Record<string, unknown> = {
             orderId: session.id, // Order ID is the Stripe session ID
             stripeSessionId: session.id,
             stripeCustomerId: customerId,
@@ -206,7 +209,9 @@ export async function POST(request: NextRequest) {
           if (subscriptionId) {
             try {
               const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-              const periodEnd = (subscription as any).current_period_end;
+              // Access the subscription data - use Record type to handle varying Stripe API versions
+              const subData = subscription as unknown as Record<string, unknown>;
+              const periodEnd = subData.current_period_end;
               if (periodEnd && typeof periodEnd === 'number') {
                 orderData.nextBillingDate = new Date(periodEnd * 1000);
               }
@@ -231,15 +236,17 @@ export async function POST(request: NextRequest) {
           // 2. Process the order (create email accounts, etc.)
           // 3. Notify your team
 
-        } catch (dbError: any) {
+        } catch (dbError: unknown) {
+          const errorMessage = dbError instanceof Error ? dbError.message : 'Unknown error';
+          const errorStack = dbError instanceof Error ? dbError.stack : undefined;
           console.error('Database error in checkout.session.completed:', {
-            error: dbError.message,
-            stack: dbError.stack,
+            error: errorMessage,
+            stack: errorStack,
             sessionId: session.id,
           });
           // Return error so Stripe knows to retry
           return NextResponse.json(
-            { error: 'Database error processing order', details: dbError.message },
+            { error: 'Database error processing order', details: errorMessage },
             { status: 500 }
           );
         }
@@ -273,7 +280,7 @@ export async function POST(request: NextRequest) {
       eventType: event.type,
       eventId: event.id,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error processing webhook:', error);
     return NextResponse.json(
       { error: 'Webhook processing failed' },

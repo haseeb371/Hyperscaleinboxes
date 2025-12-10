@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
     // Parse accountNames JSON string into objects
     let accounts: Array<{ firstName?: string; lastName?: string; email?: string }> = [];
-    const rawAccountNames = (order as any).accountNames as string | undefined;
+    const rawAccountNames = (order as { accountNames?: string }).accountNames;
 
     if (rawAccountNames) {
       try {

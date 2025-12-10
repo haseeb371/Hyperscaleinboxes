@@ -68,9 +68,9 @@ export default function AdminDashboard() {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('CSV download error:', err);
-      alert(err.message || 'Failed to download CSV');
+      alert(err instanceof Error ? err.message : 'Failed to download CSV');
     }
   };
 
@@ -94,8 +94,8 @@ export default function AdminDashboard() {
 
       const data = await response.json();
       setOrders(data.orders);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load orders');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load orders');
     } finally {
       setIsLoading(false);
     }
@@ -161,8 +161,8 @@ export default function AdminDashboard() {
       // Refresh orders after update
       await fetchOrders();
       closeEditModal();
-    } catch (err: any) {
-      alert(err.message || 'Failed to update order');
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Failed to update order');
     } finally {
       setIsUpdating(false);
     }
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
   };
 
   const getStatusColor = (status: string) => {
-    const colors: any = {
+    const colors: Record<string, string> = {
       'in-review': 'rgba(59, 130, 246, 0.2)',
       'processing': 'rgba(234, 179, 8, 0.2)',
       'completed': 'rgba(34, 197, 94, 0.2)',
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
   };
 
   const getStatusTextColor = (status: string) => {
-    const colors: any = {
+    const colors: Record<string, string> = {
       'in-review': '#60a5fa',
       'processing': '#fbbf24',
       'completed': '#4ade80',

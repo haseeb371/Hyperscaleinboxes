@@ -3,8 +3,7 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import FloatingLines from "@/components/FloatingLines";
-import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 export default function About() {
   const [isVisible, setIsVisible] = useState({
@@ -54,7 +53,7 @@ export default function About() {
     {
       title: "Expert Support",
       description:
-        "24/7 dedicated support team ensuring your email infrastructure performs flawlessly. We're here to help you succeed every step.",
+        "24/7 dedicated support team ensuring your email infrastructure performs flawlessly. We&apos;re here to help you succeed every step.",
       icon: "handshake",
     },
   ];
@@ -119,6 +118,22 @@ export default function About() {
     },
   ];
 
+  const animateCount = useCallback((key: string, target: number, duration: number) => {
+    const steps = 60;
+    const increment = target / steps;
+    let current = 0;
+    const stepDuration = duration / steps;
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      setCounts((prev) => ({ ...prev, [key]: current }));
+    }, stepDuration);
+  }, []);
+
   useEffect(() => {
     const observerOptions = {
       threshold: 0.1,
@@ -147,26 +162,16 @@ export default function About() {
       observer.observe(el);
     });
 
-    setIsVisible((prev) => ({ ...prev, hero: true }));
+    // Use setTimeout to avoid synchronous setState in effect
+    const timeoutId = setTimeout(() => {
+      setIsVisible((prev) => ({ ...prev, hero: true }));
+    }, 0);
 
-    return () => observer.disconnect();
-  }, []);
-
-  const animateCount = (key: string, target: number, duration: number) => {
-    const steps = 60;
-    const increment = target / steps;
-    let current = 0;
-    const stepDuration = duration / steps;
-
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        current = target;
-        clearInterval(timer);
-      }
-      setCounts((prev) => ({ ...prev, [key]: current }));
-    }, stepDuration);
-  };
+    return () => {
+      clearTimeout(timeoutId);
+      observer.disconnect();
+    };
+  }, [animateCount]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a0a0a] via-[#1a1a1a] to-[#0f0f0f]">
@@ -216,7 +221,7 @@ export default function About() {
               <span className="text-white"> in Email Infrastructure</span>
             </h1>
             <p className="text-xl lg:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto font-light tracking-wide">
-              We're on a mission to help businesses worldwide achieve unlimited
+              We&apos;re on a mission to help businesses worldwide achieve unlimited
               email capacity through innovative Microsoft Partner solutions
             </p>
           </div>
@@ -275,7 +280,7 @@ export default function About() {
                 <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Vision</span>
               </h2>
               <p className="text-gray-300 leading-relaxed flex-grow relative z-10 text-[15px]">
-                To become the world's most trusted email infrastructure
+                To become the world&apos;s most trusted email infrastructure
                 provider, enabling businesses to scale without limits while we
                 handle deliverability.
               </p>

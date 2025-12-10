@@ -310,7 +310,7 @@ export const VectorButton = () => {
         textAnchor="middle"
         transform="rotate(-90, 24, 113)"
       >
-        Let's Talk Business
+        Let&apos;s Talk Business
       </text>
     </svg>
   );

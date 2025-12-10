@@ -95,11 +95,11 @@ export default function Contact() {
               <span className="text-xs font-semibold text-orange-400 tracking-wide">Get In Touch</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight tracking-tight">
-              <span className="text-white">Let's </span>
+              <span className="text-white">Let&apos;s </span>
               <span className="bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">Connect</span>
             </h1>
             <p className="text-base text-gray-400 leading-relaxed">
-              Have questions about our email infrastructure? We're here to help you scale your outreach.
+              Have questions about our email infrastructure? We&apos;re here to help you scale your outreach.
             </p>
           </div>
 
@@ -147,7 +147,7 @@ export default function Contact() {
                 <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full opacity-10 blur-3xl" style={{ background: 'radial-gradient(circle, #ff6e40 0%, transparent 70%)' }}></div>
 
                 <h2 className="text-xl font-bold text-white mb-1 relative z-10">Send us a Message</h2>
-                <p className="text-gray-400 mb-6 relative z-10 text-sm">Fill out the form and we'll get back to you shortly.</p>
+                <p className="text-gray-400 mb-6 relative z-10 text-sm">Fill out the form and we&apos;ll get back to you shortly.</p>
 
               <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                 <div>

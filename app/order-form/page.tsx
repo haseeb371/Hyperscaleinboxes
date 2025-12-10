@@ -534,9 +534,9 @@ export default function OrderFormPage() {
       } else {
         throw new Error('No checkout URL received');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Checkout error:', error);
-      alert(`Error: ${error.message || 'Failed to process payment. Please try again.'}`);
+      alert(`Error: ${error instanceof Error ? error.message : 'Failed to process payment. Please try again.'}`);
       setIsSubmitting(false);
     }
   };
@@ -1242,7 +1242,7 @@ export default function OrderFormPage() {
 
                 <div className="mt-6 p-4 rounded-xl" style={{ background: 'rgba(255, 110, 64, 0.1)', borderLeft: '4px solid #ff6e40' }}>
                   <p className="text-gray-300 text-sm">
-                    <strong className="text-orange-400">Note:</strong> You'll get 50 email accounts per domain. In the next step, you'll provide account details for these inboxes.
+                    <strong className="text-orange-400">Note:</strong> You&apos;ll get 50 email accounts per domain. In the next step, you&apos;ll provide account details for these inboxes.
                   </p>
                 </div>
               </div>

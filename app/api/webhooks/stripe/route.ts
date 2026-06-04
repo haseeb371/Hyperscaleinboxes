@@ -4,9 +4,17 @@ import connectDB from '@/lib/mongodb';
 import Order from '@/lib/models/Order';
 import CheckoutSession from '@/lib/models/CheckoutSession';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-11-17.clover',
-});
+const getStripe = () => {
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+
+  if (!apiKey) {
+    throw new Error('STRIPE_SECRET_KEY is not configured');
+  }
+
+  return new Stripe(apiKey, {
+    apiVersion: '2025-11-17.clover',
+  });
+};
 
 // Route segment config for webhook
 export const runtime = 'nodejs';
@@ -14,6 +22,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
+    const stripe = getStripe();
     const body = await request.text();
     const signature = request.headers.get('stripe-signature');
 

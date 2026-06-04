@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface Order {
@@ -266,7 +267,23 @@ export default function AdminDashboard() {
             </h1>
             <p className="text-gray-400">Manage and track all customer orders</p>
           </div>
-          <div className="mt-6 md:mt-0 flex gap-4">
+          <div className="mt-6 md:mt-0 flex flex-wrap gap-4">
+            <Link
+              href="/admin/blogs"
+              className="px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 hover:scale-105"
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <span className="flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 4v6h6" />
+                </svg>
+                Blog Manager
+              </span>
+            </Link>
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}

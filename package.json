@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p 8865",
-    "lint": "eslint"
+    "lint": "eslint",
+    "hash-password": "node scripts/generate-password-hash.js",
+    "seed-blogs": "node scripts/seed-blogs.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -80,9 +81,9 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
+                <Link href="/#pricing" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
@@ -107,14 +108,14 @@ const Footer = () => {
             <h3 className="text-white font-bold mb-6 text-base uppercase tracking-wide">Company</h3>
             <ul className="space-y-4">
               <li>
-                <a href="/about" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
+                <Link href="/about" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
+                <Link href="/blog" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
                   Blog
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
@@ -122,9 +123,9 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
+                <Link href="/contact" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
                   Contact
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
@@ -174,12 +175,12 @@ const Footer = () => {
               © {currentYear} HyperScale. All rights reserved.
             </p>
             <div className="flex gap-8">
-              <a href="/privacy" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300">
+              <Link href="/privacy" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300">
                 Privacy Policy
-              </a>
-              <a href="/terms" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300">
+              </Link>
+              <Link href="/terms" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300">
                 Terms of Service
-              </a>
+              </Link>
               <a href="#" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300">
                 Cookie Policy
               </a>

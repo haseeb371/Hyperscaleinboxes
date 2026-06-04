@@ -5,8 +5,13 @@ import { jwtVerify } from 'jose';
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Protect admin dashboard route
-    if (pathname.startsWith('/admin/dashboard')) {
+    // Redirect from /admin to /admin/login
+    if (pathname === '/admin' || pathname === '/admin/') {
+        return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+
+    // Protect all admin routes except login
+    if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
         const token = request.cookies.get('admin-token')?.value;
 
         if (!token) {
@@ -25,11 +30,6 @@ export async function middleware(request: NextRequest) {
             // Invalid token, redirect to login
             return NextResponse.redirect(new URL('/admin/login', request.url));
         }
-    }
-
-    // Redirect from /admin to /admin/login
-    if (pathname === '/admin' || pathname === '/admin/') {
-        return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
     return NextResponse.next();

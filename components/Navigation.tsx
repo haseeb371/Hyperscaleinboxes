@@ -14,6 +14,7 @@ const Navigation = () => {
     { label: "Home", path: "/" },
     { label: "How It Works", path: "/#services" },
     { label: "Pricing", path: "/#pricing" },
+    { label: "Blog", path: "/blog" },
     { label: "About Us", path: "/about" },
     { label: "Contact Us", path: "/contact" }
   ];
@@ -51,7 +52,7 @@ const Navigation = () => {
           </Link>
 
           {/* Navigation Menu - Desktop */}
-          <div className="hidden lg:flex items-center gap-10">
+          <div className="hidden lg:flex items-center gap-7">
             {navItems.map((item) => (
               <Link
                 key={item.label}

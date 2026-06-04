@@ -150,9 +150,17 @@ import Stripe from 'stripe';
 import connectDB from '@/lib/mongodb';
 import CheckoutSession from '@/lib/models/CheckoutSession';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-11-17.clover',
-});
+const getStripe = () => {
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+
+  if (!apiKey) {
+    throw new Error('STRIPE_SECRET_KEY is not configured');
+  }
+
+  return new Stripe(apiKey, {
+    apiVersion: '2025-11-17.clover',
+  });
+};
 
 // Price IDs
 const PRICE_IDS = {
@@ -167,6 +175,7 @@ console.log(DEFAULT_COUPON_ID)
 
 export async function POST(request: NextRequest) {
   try {
+    const stripe = getStripe();
     const body = await request.json();
     const { formData, accountNames } = body;
 

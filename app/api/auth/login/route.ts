@@ -1,78 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
+import { getAdminPasswordHash } from '@/lib/mongodb';
 
 export async function POST(request: NextRequest) {
-    try {
-        const { email, password } = await request.json();
+  try {
+    const { email, password } = await request.json();
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPasswordHash = getAdminPasswordHash();
 
-        // Get admin credentials from environment
-        const adminEmail = process.env.ADMIN_EMAIL;
-        const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
-
-
-console.log('Login attempt:', {
-    providedEmail: email,
-    expectedEmail: adminEmail,
-    emailMatch: email === adminEmail,
-    hasPassword: !!password,
-    hasPasswords: password,
-    hasHash: !!adminPasswordHash,
-    hashLength: adminPasswordHash?.length,
-    // Show the actual hash value
-    actualHash: adminPasswordHash,
-    // Show first and last 10 chars
-    hashStart: adminPasswordHash?.substring(0, 10),
-    hashEnd: adminPasswordHash?.substring(adminPasswordHash.length - 10)
-});
-        if (!adminEmail || !adminPasswordHash) {
-            return NextResponse.json(
-                { error: 'Server configuration error' },
-                { status: 500 }
-            );
-        }
-
-        // Validate credentials
-        if (email !== adminEmail) {
-            return NextResponse.json(
-                { error: 'Invalid credentials' },
-                { status: 401 }
-            );
-        }
-
-        // Compare password with hash
-        const isValidPassword = await bcrypt.compare(password, adminPasswordHash);
-
-        if (!isValidPassword) {
-            return NextResponse.json(
-                { error: 'Invalid credentials' },
-                { status: 401 }
-            );
-        }
-
-        // Create JWT token
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
-        const token = await new SignJWT({ email })
-            .setProtectedHeader({ alg: 'HS256' })
-            .setExpirationTime('24h')
-            .sign(secret);
-
-        // Create response with token in cookie
-        const response = NextResponse.json({ success: true });
-        response.cookies.set('admin-token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 86400, // 24 hours
-            path: '/',
-        });
-
-        return response;
-    } catch (error) {
-        console.error('Login error:', error);
-        return NextResponse.json(
-            { error: 'Authentication failed' },
-            { status: 500 }
-        );
+    if (!adminEmail || !adminPasswordHash) {
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
+
+    if (email !== adminEmail) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, adminPasswordHash);
+
+    if (!isValidPassword) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
+    const token = await new SignJWT({ email })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('24h')
+      .sign(secret);
+
+    const response = NextResponse.json({ success: true });
+    response.cookies.set('admin-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 86400,
+      path: '/',
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Login error:', error);
+    return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
+  }
 }

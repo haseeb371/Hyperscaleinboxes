@@ -170,11 +170,13 @@ export default function AdminDashboard() {
   };
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = 
-      order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (order.companyName || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const q = searchQuery.toLowerCase();
+    const field = (value?: string | null) => (value ?? '').toLowerCase();
+    const matchesSearch =
+      field(order.customerName).includes(q) ||
+      field(order.customerEmail).includes(q) ||
+      field(order.orderId).includes(q) ||
+      field(order.companyName).includes(q);
 
     const matchesFilter = filterStatus === 'all' || order.status === filterStatus;
 
@@ -192,15 +194,23 @@ export default function AdminDashboard() {
     setCurrentPage(1);
   }, [searchQuery, filterStatus]);
 
-  const formatCurrency = (amount: number, currency: string) => {
+  const formatCurrency = (amount?: number | null, currency?: string | null) => {
+    const safeAmount = typeof amount === 'number' && !Number.isNaN(amount) ? amount : 0;
+    const safeCurrency = (currency || 'usd').toUpperCase();
+
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(amount / 100);
+      currency: safeCurrency,
+    }).format(safeAmount / 100);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (dateString?: string | null) => {
+    if (!dateString) return '—';
+
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return '—';
+
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -494,7 +504,7 @@ export default function AdminDashboard() {
                         <tr key={order._id} className="hover:bg-white/5 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div>
-                              <p className="text-sm font-semibold text-white">{order.orderId.substring(0, 20)}...</p>
+                              <p className="text-sm font-semibold text-white">{(order.orderId || 'Unknown').substring(0, 20)}...</p>
                               <p className="text-xs text-gray-400 mt-1">
                                 {order.totalAccounts} accounts
                               </p>
@@ -502,8 +512,8 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-6 py-4">
                             <div>
-                              <p className="text-sm font-semibold text-white">{order.customerName}</p>
-                              <p className="text-xs text-gray-400 mt-1">{order.customerEmail}</p>
+                              <p className="text-sm font-semibold text-white">{order.customerName || 'Unknown customer'}</p>
+                              <p className="text-xs text-gray-400 mt-1">{order.customerEmail || 'No email'}</p>
                               {order.companyName && (
                                 <p className="text-xs text-gray-500 mt-0.5">{order.companyName}</p>
                               )}
@@ -677,7 +687,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">
                 Edit Order{' '}
-                <span className="text-orange-400">{editingOrder.orderId.substring(0, 15)}...</span>
+                <span className="text-orange-400">{(editingOrder.orderId || 'Unknown').substring(0, 15)}...</span>
               </h2>
               <button
                 onClick={closeEditModal}
@@ -692,10 +702,10 @@ export default function AdminDashboard() {
             {/* Order Info */}
             <div className="mb-6 p-4 rounded-xl" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
               <p className="text-sm text-gray-300">
-                <span className="font-semibold text-white">Customer:</span> {editingOrder.customerName}
+                <span className="font-semibold text-white">Customer:</span> {editingOrder.customerName || 'Unknown customer'}
               </p>
               <p className="text-sm text-gray-300 mt-1">
-                <span className="font-semibold text-white">Email:</span> {editingOrder.customerEmail}
+                <span className="font-semibold text-white">Email:</span> {editingOrder.customerEmail || 'No email'}
               </p>
             </div>
 

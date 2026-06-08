@@ -26,21 +26,33 @@ export async function POST(request: NextRequest) {
     const slugs: string[] = [];
 
     for (const blog of blogs) {
+      const slug = String(blog.slug || '').trim();
+      const title = String(blog.title || '').trim();
+      const excerpt = String(blog.excerpt || '').trim();
+      const content = String(blog.content || '').trim();
+
+      if (!slug || !title || !excerpt || !content) {
+        return NextResponse.json({ error: 'Each seed blog needs a title, slug, excerpt, and content.' }, { status: 400 });
+      }
+
+      const tags = Array.isArray(blog.tags) ? blog.tags.map(String).filter(Boolean) : [];
+      const status: 'draft' | 'published' = blog.status === 'published' ? 'published' : 'draft';
+
       const payload = {
-        title: blog.title,
-        slug: blog.slug,
-        excerpt: blog.excerpt,
-        content: blog.content,
-        coverImage: blog.coverImage,
-        author: blog.author || 'HyperScale Team',
-        category: blog.category,
-        tags: blog.tags || [],
-        status: blog.status === 'published' ? 'published' : 'draft',
+        title,
+        slug,
+        excerpt,
+        content,
+        coverImage: blog.coverImage ? String(blog.coverImage) : undefined,
+        author: blog.author ? String(blog.author) : 'HyperScale Team',
+        category: blog.category ? String(blog.category) : undefined,
+        tags,
+        status,
         publishedAt: blog.publishedAt ? new Date(String(blog.publishedAt)) : undefined,
       };
 
-      await Blog.findOneAndUpdate({ slug: blog.slug }, payload, { upsert: true, new: true });
-      slugs.push(String(blog.slug));
+      await Blog.findOneAndUpdate({ slug }, payload, { upsert: true, new: true });
+      slugs.push(slug);
     }
 
     return NextResponse.json({

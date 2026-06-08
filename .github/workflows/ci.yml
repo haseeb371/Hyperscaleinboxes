@@ -1,0 +1,38 @@
+name: Hyperscale Inboxes CI
+
+on:
+  push:
+    branches:
+      - ahmadshah-main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      ADMIN_EMAIL: ci-admin@example.com
+      ADMIN_PASSWORD_HASH: "$2b$10$QH8By30Mc1nYaLgY6pfq2u2rjHNsnXAmcHFci/X1WfEja7Kax9Uw6"
+      JWT_SECRET: ci-only-secret-change-in-production
+      MONGODB_URI: mongodb://127.0.0.1:27017/hyperscale-ci
+      MONGODB_DB: hyperscale-ci
+      NEXT_PUBLIC_BASE_URL: http://localhost:3000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build

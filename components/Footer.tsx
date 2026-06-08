@@ -160,6 +160,11 @@ const Footer = () => {
                 </a>
               </li>
               <li>
+                <Link href="/blog" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
+                  Blog RSS
+                </Link>
+              </li>
+              <li>
                 <a href="#" className="text-base text-gray-300 hover:text-orange-400 transition-colors duration-300 hover:translate-x-1 inline-block">
                   Report an Issue
                 </a>

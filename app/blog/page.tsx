@@ -5,7 +5,6 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import BlogPageClient from '@/components/blog/BlogPageClient';
 import { getPublishedBlogs } from '@/lib/blogStore';
-import { tryConnectDB } from '@/lib/mongodb';
 import type { BlogPostCard } from '@/lib/blogUtils';
 
 export const dynamic = 'force-dynamic';
@@ -16,11 +15,6 @@ export const metadata: Metadata = {
 };
 
 const loadPublishedBlogs = async (): Promise<{ blogs: BlogPostCard[]; dbError: string | null }> => {
-  const connected = await tryConnectDB();
-  if (!connected) {
-    return { blogs: [], dbError: 'Unable to load blog posts right now. Please try again in a moment.' };
-  }
-
   try {
     const blogs = await getPublishedBlogs();
     return {

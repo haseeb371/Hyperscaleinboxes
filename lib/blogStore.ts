@@ -1,4 +1,4 @@
-import connectDB, { tryConnectDB } from '@/lib/mongodb';
+import connectDB from '@/lib/mongodb';
 import Blog from '@/lib/models/Blog';
 
 export type BlogStatus = 'draft' | 'published';
@@ -115,7 +115,7 @@ export async function getAdminBlogs() {
 }
 
 export async function getPublishedBlogs() {
-  if (!(await tryConnectDB())) return [];
+  await connectDB();
   const blogs = await Blog.find({ status: 'published' })
     .sort({ publishedAt: -1, createdAt: -1 })
     .lean();
@@ -124,7 +124,7 @@ export async function getPublishedBlogs() {
 }
 
 export async function getPublishedBlogBySlug(slug: string) {
-  if (!(await tryConnectDB())) return null;
+  await connectDB();
   const blog = await Blog.findOne({ slug, status: 'published' }).lean();
   return blog ? serializeBlog(blog as unknown as Record<string, unknown>) : null;
 }
